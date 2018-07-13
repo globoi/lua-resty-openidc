@@ -1330,10 +1330,16 @@ local function openidc_get_bearer_access_token(opts)
 
   -- get the access token from the Authorization header
   local headers = ngx.req.get_headers()
-  local header =  headers['Authorization']
+  local auth_header_name = "Authorization"
+
+  if opts.custom_auth_header_name then
+    auth_header_name = opts.custom_auth_header_name
+  end
+
+  local header =  headers[auth_header_name]
 
   if header == nil or header:find(" ") == nil then
-    err = "no Authorization header found"
+    err = "no " .. auth_header_name .. " header found"
     ngx.log(ngx.ERR, err)
     return nil, err
   end
